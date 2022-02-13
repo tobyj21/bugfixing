@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+   <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="initial-scale=1" />
+      <% if(typeof csrfToken !== "undefined"){%>
+      <meta name="csrf-token" content="<%= csrfToken %>" />
+      <%}%>
+      <title>Auth test</title>
+
+      <script src="/js/jquery-3.6.0.min.js"></script>
+      <script src="/js/modal.js"></script>
+      <link rel="stylesheet" type="text/css" href="/css/modal.css" />
+   </head>
+   <body>
+      This is the public page.
+      <button class="loadStuff">request restricted content</button>
+      <BR /><BR />
+      <%= isLoggedIn ? "Logged in" : "Logged out" %>
+
+      <div class="modal small" id="login">
+         <div class="modal-container left">
+            <div class="modal-content white text-center">
+               <input type="hidden" id="ajax-request-id" />
+
+               <div class="row">
+                  <div class="cell" id="log-in-message">
+                     <div class="error-notice icon-attention-alt">
+                        You have been logged out due to inactivity. Please log in again
+                     </div>
+                  </div>
+               </div>
+               <BR />
+               Username<BR /> me@server.com<BR />
+               <BR />
+               <div class="row">
+                  <div class="cell">
+                     <div class="login-field text">
+                        <input
+                           type="text"
+                           spellcheck="false"
+                           placeholder="Email address"
+                           name="email"
+                           autocomplete="username"
+                           required
+                           id="log-in-username"
+                           value="me@server.com"
+                        />
+                        <i class="icon icon-at"></i>
+                     </div>
+                  </div>
+               </div>
+               <BR />
+               Password<BR />
+
+               verysecure@1
+               <div class="row">
+                  <div class="cell">
+                     <div class="login-field text">
+                        <input
+                           type="password"
+                           placeholder="Password"
+                           name="password"
+                           autocomplete="current-password"
+                           required
+                           id="log-in-password"
+                           value=""
+                        />
+                        <i class="icon icon-lock"></i>
+                     </div>
+                  </div>
+               </div>
+               <BR />
+               <div class="row">
+                  <div class="cell">
+                     <button type="submit" class="button color icon-ok" id="login-submit">Log in</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <script src="/js/server.js"></script>
+   </body>
+</html>

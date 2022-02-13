@@ -1,0 +1,56 @@
+If you need to run the project, it needs a postgres DB connection (config set in .env file). 
+I've done a database initialization script in database_init.sql
+
+
+
+Session expiry bug:
+Once a user is logged in, I want their session to be extended each time they make a new request to the server. 
+My understanding is that this should be what Express does by default – but this is not happening. 
+Currently, the session ends at the time specified using the ‘maxAge’ regardless of what the user does. 
+I expect this is just a simple configuration problem, but I can’t figure it out.
+
+The session config is in index.js. I've set the max age to 10 seconds on line 31 to make it clear.
+
+Test scenario:
+1. Go to home page http://localhost:3002/
+2. Click the 'request restricted content' and log in using the provided credentials
+3. Press refresh. The page should say 'logged in'
+4. Refresh every few seconds
+5. After 10 seconds, the notice will change to 'logged out'.
+
+Step 5 is the bug - the session should be extended each time the user refreshes
+
+
+CSRF bug:
+Some times a user will try and submit some form data using AJAX.
+If their session has expired due to inactivity, I want them to be able to log in via the modal window, get a new session
+and resend the form without leaving the page and loosing any data.
+
+I wrote a script (server.js) in the front end to do this.
+To give context, this module is supposed to do the following:
+1. When a user makes a request, it sends an AJAX request to the server
+2. If it fails due to no session, it shows the login form
+3. Whilst they are typing, it requests a new CSRF token, in case the old one is expired, and stores the results
+4. It then waits for an event which will be fired when a logged in session is received
+5. Once the user has completed the login form and submitted it, that event will be fired
+6. The original request will be resent, using the new CSRF token 
+
+The bug is that at step 6, the new CSRF token is always rejected by the server
+
+To test this, you'll first need to comment / uncomment a few lines  on auth.js:
+Uncomment Line 19
+Add comment to Line 20
+Uncomment line 49
+Uncomment line 52
+
+Test scenario:
+
+1. Go to home page http://localhost:3002/
+2. Click the 'request restricted content' and log in using the provided credentials
+3. If the user has no session, the login modal should appear
+4. After logging in, the original request will be resent, and this alert shown: "Success: Here is some restricted content from the server"
+
+The bug is that number 4 doesn't happen due to a 403 error / CSRF rejected.
+
+
+
